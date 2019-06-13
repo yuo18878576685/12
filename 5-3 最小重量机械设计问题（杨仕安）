@@ -1,0 +1,47 @@
+# 5-3 最小重量机械设计问题
+n = 3 # 零件数量
+m = 3 # 供应商数量
+p = 4 # 不应超过的价格
+
+c = [[1,2,3], [3,2,1], [2,2,2]] # 相应的价格
+w = [[1,2,3], [3,2,1], [2,2,2]] # 供应商j处购得的部件 i 的重量
+
+min_weight = 10000
+bast_choose = [None]*3
+cur_choose = [None]*10
+cur_weight = 0
+cur_price = 0
+
+def backtrack(t):
+# 此处的t代表每一次遍历i供应商的零件
+    global cur_weight, cur_price, cur_choose, min_weight, p, w, c
+    if t == n:
+        # 遍历到叶子结点
+        if cur_weight < min_weight:
+            min_weight = cur_weight
+
+            for j in range(n):
+                bast_choose[j] = cur_choose[j] + 1
+            return
+
+    else:
+        for i in range(m): # 遍历供应商
+            cur_choose[t] = i
+            cur_weight += w[t][i]
+            cur_price += c[t][i]
+
+            if cur_weight < min_weight and cur_price <= p:
+                # 该供应商的重量小于局部最优解 同时价格满足要求 则遍历其子树
+                backtrack(t+1)
+
+            cur_weight -= w[t][i]
+            cur_price -= c[t][i]
+            cur_choose[t] = 0
+                # 构造回溯法中的解空间树
+def main():
+    backtrack(0)
+    print('最小的重量是:%d'%min_weight)
+    print('最佳选择是:',bast_choose)
+
+if __name__ == '__main__':
+    main()
